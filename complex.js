@@ -1,10 +1,9 @@
-const assert = require('assert'); 
 const Scalar = require('./scalar'); 
 
 class Complex extends Scalar{
     constructor(real, imag) {
         super(); 
-        assert(Scalar.isNumber(real) && (Scalar.isNumber(imag) || imag == undefined)); 
+        if (!(Scalar.isNumber(real) && (Scalar.isNumber(imag) || imag == undefined))) { throw "items in Complex must be Number !"; }
         this.real = real; 
         this.imag = (imag) ? imag : 0; 
     }
@@ -55,7 +54,7 @@ class Complex extends Scalar{
 
     div(other) {
         var _abs = other.real ** 2 + other.imag ** 2; 
-        assert(_abs > 0); 
+        if (_abs == 0) { throw "zero can't be divided !"; }
         return new Complex((this.real * other.real + this.imag * other.imag) / _abs, (this.imag * other.real - this.real * other.imag) / _abs); 
     }
 

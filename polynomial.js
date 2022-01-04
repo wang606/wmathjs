@@ -1,4 +1,3 @@
-const assert = require('assert'); 
 const nt = require('./number_theory'); 
 const Scalar = require('./scalar'); 
 const Fraction = require('./fraction'); 
@@ -7,14 +6,12 @@ const Vector = require('./vector');
 class Polynomial extends Vector{
     constructor() {
         super(); 
-        if (arguments.length == 0) throw "too few arguments !"; 
-        var args; 
-        if (arguments.length == 1 && arguments[0] instanceof Array) args = arguments[0]; 
-        else args = arguments; 
+        if (arguments.length != 1) throw "too many or too few arguments !"; 
+        if (!arguments[0] instanceof Array) throw "argument must be Array !"; 
         this.coefficient = []; 
-        for (var _i in args) {
-            assert(Vector.isVector(args[_i])); 
-            this.coefficient.push(Vector.deepcopy(args[_i])); 
+        for (var _i in arguments[0]) {
+            if (!Vector.isVector(arguments[0][_i])) { throw "items in Polynomial must be Vector !"; }
+            this.coefficient.push(Vector.deepcopy(arguments[0][_i])); 
         }
         this.adjust(); 
     }
@@ -50,6 +47,8 @@ class Polynomial extends Vector{
     equal(other) {
         if (this.degree() != other.degree())
             return false; 
+        if (this.coefficient == other.coefficient)
+            return true; 
         for (var i = 0; i <= this.degree(); i++)
             if (!Vector.equal(this.coefficient[i], other.coefficient[i]))
                 return false; 
@@ -106,8 +105,10 @@ class Polynomial extends Vector{
         var _degree = this.degree() + other.degree(); 
         var _coefficient = []; 
         for (var i = 0; i <= this.degree(); i++)
-            for (var j = 0; j <= other.degree(); j++)
-                _coefficient[i + j] = Vector.add(Vector.mul(this.coefficient[i], other.coefficient[j]), (_coefficient[i + j]) ? _coefficient[i + j] : 0); 
+            for (var j = 0; j <= other.degree(); j++) {
+                var _ = Vector.mul(this.coefficient[i], other.coefficient[j]); 
+                _coefficient[i + j] = (_coefficient[i + j]) ? Vector.add(_,  _coefficient[i + j]) : _; 
+            }
         return new Polynomial(_coefficient); 
     }
 
@@ -133,7 +134,7 @@ class Polynomial extends Vector{
         /* exp: Int */
         if ((typeof(exp) == "number" || exp instanceof Number) && exp % 1 == 0 && exp >= 0) {
             var _this = this.deepcopy(); 
-            var _pow = new Polynomial(1); 
+            var _pow = new Polynomial([1]); 
             while (exp) {
                 if (exp & 1) _pow = _pow.mul(_this); 
                 _this = _this.mul(_this); 
@@ -304,11 +305,7 @@ class Polynomial extends Vector{
         }
         } catch { throw "real_roots() is valid only when all elements in this.coefficient are Number !!!"; }
     }
-
-    static one(type) { return new Polynomial(Vector.one(type)); }
-
-    static zero(type) { return new Polynomial(Vector.zero(type)); }
-
+    
     static similarOne(_this, precision) {
         var __this = _this.deepcopy().similarAdjust(); 
         return (__this.degree() == 0 && Vector.similarOne(__this.coefficient[0], precision)); 
@@ -335,7 +332,7 @@ class Polynomial extends Vector{
         // var _a = a.deepcopy(); 
         // var _b = b.deepcopy(); 
         if (a.div(b)[1].degree() == 0)
-            return [b.monic(), this.zero(b.coefficient[b.degree()]), new Polynomial(Vector.reciprocal(b.coefficient[b.degree()]))]; 
+            return [b.monic(), this.zero(b.coefficient[b.degree()]), new Polynomial([Vector.reciprocal(b.coefficient[b.degree()])])]; 
         else {
             var __g_x_y = this.greatest_common_divisor_with_coefficient_in_polynomial(b, a.div(b)[1]); 
             var _x = __g_x_y[2]; 

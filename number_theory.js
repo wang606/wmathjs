@@ -1,5 +1,6 @@
-const assert = require('assert'); 
 const Scalar = require('./scalar'); 
+
+const checkInt = (a) => { if (!Scalar.isInt(a)) throw "argument must be Int !"; }
 
 function is_prime(x) {
     /*
@@ -8,7 +9,7 @@ function is_prime(x) {
     :param x: (int)
     :return: (bool) True if x is a prime, while False if not
     */
-    assert(Scalar.isInt(x)); 
+    checkInt(x); 
     if (x == 2)
         return true; 
     if ((x & 1) == 0 || x <= 1)
@@ -32,7 +33,7 @@ function find_prime_until(x) {
     :param x: (int)
     :return: (array) all prime less than int x
     */
-    assert(Scalar.isNumber(x)); 
+    checkInt(x); 
     if (x < 2)
         return []; 
     var _prime = [2]; 
@@ -64,7 +65,7 @@ function prime_factor_without_exp(x) {
     :param x: (int)
     :return: (array) all prime factors of int x
     */
-    assert(Scalar.isInt(x)); 
+    checkInt(x); 
     x = Math.abs(x); 
     if (x == 0 || x == 1)
         return []; 
@@ -90,7 +91,7 @@ function prime_factor_with_exp(x) {
     :param x: (int)
     :return: (dict) all prime factors as keys with each exp as value of int x
     */
-    assert(Scalar.isInt(x)); 
+    checkInt(x); 
     x = Math.abs(x); 
     if (x == 0 || x == 1)
         return {}; 
@@ -118,7 +119,7 @@ function factor(x) {
     :param x: (int)
     :return: (array) all factors of int x
     */
-    assert(Scalar.isInt(x)); 
+    checkInt(x); 
     x = Math.abs(x); 
     if (x == 0) {
         console.warn('the factors of 0 is unclear, return [] instead. '); 
@@ -160,7 +161,8 @@ function greatest_common_divisor(a, b) {
     :param b: (int)
     :return: (int) the greatest common divisor between a and b
     */
-    assert(Scalar.isInt(a) && Scalar.isInt(b)); 
+    checkInt(a); 
+    checkInt(b); 
     if (a == 0 && b == 0) {
         console.warn('the greatest common divisor of 0 and 0 is unclear, return 0 instead. '); 
         return 0; 
@@ -181,7 +183,7 @@ function greatest_common_divisor_in_array(a) {
     :param a: (array) integer
     :return: (int) the greatest common divisor
     */
-    assert(a instanceof Array && a.length); 
+    if ((!a instanceof Array) || (!a.length)) { throw "arg must be a non-empty Array !"; }
     var _a = a.slice(); 
     if (_a.includes(1))
         return 1; 
@@ -218,7 +220,7 @@ function least_common_multiple_in_array(a) {
     :param a: (array) integer
     :return: (int) the least common multiple
     */
-    assert(a instanceof Array && a.length); 
+    if ((!a instanceof Array) || (!a.length)) { throw "arg must be a non-empty Array !"; }
     var _a = a.slice(); 
     if (_a.includes(0))
         return 0; 
@@ -247,7 +249,8 @@ function greatest_common_divisor_with_coefficient(a, b) {
     :param b: (int)
     :return: (array) the greatest common divisor, x, y
     */
-    assert(Scalar.isInt(a) && Scalar.isInt(b)); 
+    checkInt(a); 
+    checkInt(b); 
     if (b == 0)
         return [a, 1, 0]; 
     var __gcd_x_y = greatest_common_divisor_with_coefficient(b, a % b); 
@@ -264,7 +267,7 @@ function inverse(a, n) {
     :param n: (int)
     :return: (int) x
     */
-    assert(greatest_common_divisor(a, n) == 1); 
+    if (greatest_common_divisor(a, n) != 1) { throw "they are not relatively prime !"; }
     var _ = greatest_common_divisor_with_coefficient(a, n)[1] % n; 
     _ += (_ > 0) ? 0 : n; 
     return _; 

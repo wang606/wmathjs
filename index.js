@@ -4,6 +4,7 @@ const Complex = require('./complex');
 const Fraction = require('./fraction'); 
 const Vector = require('./vector'); 
 const Polynomial = require('./polynomial'); 
+const Matrix = require('./matrix'); 
 
 function init() {
 
@@ -251,12 +252,12 @@ Vector.latex = (a) => { return Vector.latex_[Vector.typeof(a)](a); }
 }
 {/* Vector child methods */
 Vector.equal_.Scalar = Scalar.equal; 
-Vector.to_.Scalar = Scalar.to; 
+Vector.to_.Scalar0to0Scalar = Scalar.to; 
 Vector.add_.Scalar0add0Scalar = Scalar.add; 
 Vector.sub_.Scalar0sub0Scalar = Scalar.sub; 
 Vector.mul_.Scalar0mul0Scalar = Scalar.mul; 
 Vector.div_.Scalar0div0Scalar = Scalar.div; 
-Vector.pow_.Scalar = Scalar.pow; 
+Vector.pow_.Scalar0pow0Scalar = Scalar.pow; 
 Vector.deepcopy_.Scalar = Scalar.deepcopy; 
 Vector.abs_.Scalar = Scalar.abs; 
 Vector.positive_.Scalar = Scalar.positive; 
@@ -281,15 +282,34 @@ Vector.deepcopy_.Polynomial = (a) => { return a.deepcopy(); }
 Vector.positive_.Polynomial = (a) => { return a.positive(); }
 Vector.negative_.Polynomial = (a) => { return a.negative(); }
 Vector.conjugate_.Polynomial = (a) => { return a.conjugate(); }
-Vector.one_.Polynomial = (a) => { return Polynomial.one(a); }
-Vector.zero_.Polynomial = (a) => { return Polynomial.zero(a); }
+Vector.one_.Polynomial = (a) => { return new Polynomial([Vector.one(a.coefficient[0])]); }
+Vector.zero_.Polynomial = (a) => { return new Polynomial([Vector.zero(a.coefficient[0])]); }
 Vector.similarOne_.Polynomial = Polynomial.similarOne; 
 Vector.similarZero_.Polynomial = Polynomial.similarZero; 
 Vector.equalOne_.Polynomial = (a) => { return (a.degree() == 0 && Vector.equalOne(a.coefficient[0])); }
 Vector.equalZero_.Polynomial = (a) => { return (a.degree() == 0 && Vector.equalZero(a.coefficient[0])); }
 Vector.latex_.Polynomial = (a) => { return a.latex(); }
 
-Vector.to_.Scalar0to0Polynomial = (a, b) => { return new Polynomial(a); }
+Vector.equal_.Matrix = (a, b) => { return a.equal(b); }
+Vector.add_.Matrix0add0Matrix = (a, b) => { return a.add(b); }
+Vector.sub_.Matrix0sub0Matrix = (a, b) => { return a.sub(b); }
+Vector.mul_.Matrix0mul0Matrix = (a, b) => { return a.mul(b); }
+Vector.div_.Matrix0div0Matrix = (a, b) => { return a.div(b); }
+Vector.deepcopy_.Matrix = (a) => { return a.deepcopy(); }
+Vector.positive_.Matrix = (a) => { return a.positive(); }
+Vector.negative_.Matrix = (a) => { return a.negative(); }
+Vector.reciprocal_.Matrix = (a) => { return a.inverse(); }
+Vector.conjugate_.Matrix = (a) => { return a.conjugate(); }
+Vector.one_.Matrix = Matrix.one; //[TODO]
+Vector.zero_.Matrix = Matrix.zero; //[TODO]
+Vector.similarOne_.Matrix = Matrix.similarOne; 
+Vector.similarZero_.Matrix = Matrix.similarZero; 
+Vector.equalOne_.Matrix = Matrix.equalOne; 
+Vector.equalZero_.Matrix = Matrix.equalZero; 
+Vector.latex_.Matrix = (a) => { return a.latex(); }
+
+Vector.to_.Scalar0to0Polynomial = (a, b) => { return new Polynomial([a]); }
+Vector.to_.Scalar0toMatrix = (a, b) => {} //[TODO]
 Vector.add_.Scalar0add0Polynomial = (a, b) => { return new Polynomial(a) + b; }
 Vector.add_.Polynomial0add0Scalar = (a, b) => { return a + new Polynomial(b); }
 Vector.sub_.Scalar0sub0Polynomial = (a, b) => { return new Polynomial(a) - b; }
@@ -309,4 +329,5 @@ exports.Complex = Complex;
 exports.Fraction = Fraction; 
 exports.Vector = Vector; 
 exports.Polynomial = Polynomial; 
+exports.Matrix = Matrix; 
 exports.init = init; 
