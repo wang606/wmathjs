@@ -1,10 +1,10 @@
 {
   "name": "@wang606/wmathjs",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "another simple mathematical package in the world",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js && exit 1"
+    "test": "node test.js && exit 0"
   },
   "repository": {
     "type": "git",
