@@ -1,6 +1,6 @@
 {
   "name": "@wang606/wmathjs",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "another simple mathematical package in the world",
   "main": "index.js",
   "scripts": {
