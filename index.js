@@ -37,7 +37,7 @@ Scalar.isNumber = (a) => { return (typeof(a) == "number" || a instanceof Number)
 Scalar.isInt = (a) => { return ((typeof(a) == "number" || a instanceof Number) && a % 1 == 0); }
 Scalar.isScalar = (a) => { return (typeof(a) == "number" || a instanceof Number || a instanceof Scalar); }
 Scalar.typeof = (a) => {
-    if (typeof(a) == "number" || a instanceof Number) return "Number"; 
+    if (typeof(a) == "number" || a instanceof Number || a == Number) return "Number"; 
     if (a.typeName) return a.typeName(); 
     throw "it isn't a Scalar !"; 
 }
@@ -194,6 +194,7 @@ Scalar.latex_.Complex = (a) => { return a.latex(); }
 {/* Vector */
 {/* Vector static properties */
 Vector.equal_ = {}; 
+Vector.to_ = {}; 
 Vector.add_ = {}; 
 Vector.sub_ = {}; 
 Vector.mul_ = {}; 
@@ -205,6 +206,7 @@ Vector.positive_ = {};
 Vector.negative_ = {}; 
 Vector.reciprocal_ = {}; 
 Vector.conjugate_ = {}; 
+Vector.log_ = {}
 Vector.one_ = {}; 
 Vector.zero_ = {}; 
 Vector.similarOne_ = {}; 
@@ -226,11 +228,13 @@ Vector.equal = (a, b) => {
     else
         return Vector.equal_[Vector.typeof(a)](a, b); 
 }
+Vector.to = (a, b) => { return Vector.to_[Vector.typeof(a) + "0to0" + Vector.typeof(b)](a, b); }
 Vector.add = (a, b) => { return Vector.add_[Vector.typeof(a) + "0add0" + Vector.typeof(b)](a, b); }
 Vector.sub = (a, b) => { return Vector.sub_[Vector.typeof(a) + "0sub0" + Vector.typeof(b)](a, b); }
 Vector.mul = (a, b) => { return Vector.mul_[Vector.typeof(a) + "0mul0" + Vector.typeof(b)](a, b); }
 Vector.div = (a, b) => { return Vector.div_[Vector.typeof(a) + "0div0" + Vector.typeof(b)](a, b); }
 Vector.pow = (a, b) => { return Vector.pow_[Vector.typeof(a) + "0pow0" + Vector.typeof(b)](a, b); }
+Vector.log = (a) => { return Vector.log_[Vector.typeof(a)](a); }
 Vector.deepcopy = (a) => { return Vector.deepcopy_[Vector.typeof(a)](a); }
 Vector.abs = (a) => { return Vector.abs_[Vector.typeof(a)](a); }
 Vector.positive = (a) => { return Vector.positive_[Vector.typeof(a)](a); }
@@ -247,16 +251,19 @@ Vector.latex = (a) => { return Vector.latex_[Vector.typeof(a)](a); }
 }
 {/* Vector child methods */
 Vector.equal_.Scalar = Scalar.equal; 
+Vector.to_.Scalar = Scalar.to; 
 Vector.add_.Scalar0add0Scalar = Scalar.add; 
 Vector.sub_.Scalar0sub0Scalar = Scalar.sub; 
 Vector.mul_.Scalar0mul0Scalar = Scalar.mul; 
 Vector.div_.Scalar0div0Scalar = Scalar.div; 
+Vector.pow_.Scalar = Scalar.pow; 
 Vector.deepcopy_.Scalar = Scalar.deepcopy; 
 Vector.abs_.Scalar = Scalar.abs; 
 Vector.positive_.Scalar = Scalar.positive; 
 Vector.negative_.Scalar = Scalar.negative; 
 Vector.reciprocal_.Scalar = Scalar.reciprocal; 
 Vector.conjugate_.Scalar = Scalar.conjugate; 
+Vector.log_.Scalar = Scalar.log; 
 Vector.one_.Scalar = Scalar.one; 
 Vector.zero_.Scalar = Scalar.zero; 
 Vector.similarOne_.Scalar = Scalar.similarOne; 
@@ -282,6 +289,7 @@ Vector.equalOne_.Polynomial = (a) => { return (a.degree() == 0 && Vector.equalOn
 Vector.equalZero_.Polynomial = (a) => { return (a.degree() == 0 && Vector.equalZero(a.coefficient[0])); }
 Vector.latex_.Polynomial = (a) => { return a.latex(); }
 
+Vector.to_.Scalar0to0Polynomial = (a, b) => { return new Polynomial(a); }
 Vector.add_.Scalar0add0Polynomial = (a, b) => { return new Polynomial(a) + b; }
 Vector.add_.Polynomial0add0Scalar = (a, b) => { return a + new Polynomial(b); }
 Vector.sub_.Scalar0sub0Polynomial = (a, b) => { return new Polynomial(a) - b; }

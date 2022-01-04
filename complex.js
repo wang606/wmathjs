@@ -4,7 +4,7 @@ const Scalar = require('./scalar');
 class Complex extends Scalar{
     constructor(real, imag) {
         super(); 
-        assert(Scalar.isNumber(real) && Scalar.isNumber(imag)); 
+        assert(Scalar.isNumber(real) && (Scalar.isNumber(imag) || imag == undefined)); 
         this.real = real; 
         this.imag = (imag) ? imag : 0; 
     }
@@ -41,7 +41,7 @@ class Complex extends Scalar{
 
     positive() { return new Complex(this.real, this.imag); }
 
-    negative() { return this.opposite(); }
+    negative() { return new Complex(-this.real, -this.imag); }
 
     reciprocal() { return Complex.one().div(this); }
     
@@ -86,13 +86,13 @@ class Complex extends Scalar{
         return new Complex(_modulus * Math.cos(_radian), _modulus * Math.sin(_radian)); 
     }
 
-    // static one() { return new Complex(1, 0); }
+    static one() { return new Complex(1, 0); }
 
-    // static zero() { return new Complex(0, 0); }
+    static zero() { return new Complex(0, 0); }
 
-    // static isOne() { return (this.real == 1 && this.imag == 0); }
+    static isOne() { return (this.real == 1 && this.imag == 0); }
 
-    // static isZero() { return (this.real == 0 && this.imag == 0); }
+    static isZero() { return (this.real == 0 && this.imag == 0); }
     
 }; 
 

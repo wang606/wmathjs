@@ -7,6 +7,8 @@ class Vector {
     static sub() {}
     static mul() {}
     static div() {}
+    static pow() {}
+    static deepcopy() {}
     static abs() {}
     static positive() {}
     static negative() {}

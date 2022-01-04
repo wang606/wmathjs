@@ -192,6 +192,7 @@ class Polynomial extends Vector{
 
     primitive() {
         /* this function is valid only when all elements in this.coefficient are Fraction !!! */
+        try {
         var _this = this.deepcopy(); 
         var _molecule_array = []; 
         var _denominator_array = []; 
@@ -205,10 +206,12 @@ class Polynomial extends Vector{
         for (var i in _this.coefficient)
             _this.coefficient[i] = _this.coefficient[i].mul(_times); 
         return _this; 
+        } catch { throw "primitive() is valid only when all elements in this.coefficient are Fraction !!!"; }
     }
 
     rational_roots() {
         /* this function is valid only when all elements in this.coefficient are Fraction !!! */
+        try {
         var _this = this.primitive(); 
         if (_this.degree() == 0) return []; 
         if (_this.degree() == 1) return [_this.coefficient[0].div(_this.coefficient[1]).negative()]; 
@@ -224,6 +227,7 @@ class Polynomial extends Vector{
                     _rational_roots.push(_fraction.negative()); 
             }
         return _rational_roots; 
+        } catch { throw "rational_roots() is valid only when all elements in this.coefficient are Fraction !!!"; }
     }
 
     real_roots(x_precision=Scalar.precision, y_precision=null) {
@@ -266,6 +270,7 @@ class Polynomial extends Vector{
             return _mid; 
         }
 
+        try {
         if (this.degree() == 0) return []; 
         if (this.degree() == 1) return [-this.coefficient[0] / this.coefficient[1]]; 
         var _derived_real_roots = this.derived().real_roots(); 
@@ -297,6 +302,7 @@ class Polynomial extends Vector{
                 _root = __real_root_multiplication(this, 0, false); 
             return (_root) ? [_root] : []; 
         }
+        } catch { throw "real_roots() is valid only when all elements in this.coefficient are Number !!!"; }
     }
 
     static one(type) { return new Polynomial(Vector.one(type)); }
