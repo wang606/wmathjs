@@ -2,11 +2,12 @@ const nt = require('./number_theory');
 const Scalar = require('./scalar'); 
 const Fraction = require('./fraction'); 
 const Vector = require('./vector'); 
+const Matrix = require('./matrix'); 
 
 class Polynomial extends Vector{
     constructor() {
         super(); 
-        if (arguments.length != 1) throw "too many or too few arguments !"; 
+        if (arguments.length != 1) throw "only one argument accepted !"; 
         if (!arguments[0] instanceof Array) throw "argument must be Array !"; 
         this.coefficient = []; 
         for (var _i in arguments[0]) {
@@ -233,6 +234,9 @@ class Polynomial extends Vector{
 
     real_roots(x_precision=Scalar.precision, y_precision=null) {
         /* this function is valid only when all elements in this.coefficient are Number !!! */
+        x_precision = (x_precision) ? x_precision : Scalar.precision; 
+        y_precision = (y_precision) ? y_precision : null; 
+
         function __real_root_multiplication(_this, _start, _pos) {
             if (_this.value(_start) == 0) return null; 
             var _start_pos = (_this.value(_start) > 0); 
@@ -304,6 +308,24 @@ class Polynomial extends Vector{
             return (_root) ? [_root] : []; 
         }
         } catch { throw "real_roots() is valid only when all elements in this.coefficient are Number !!!"; }
+    }
+
+    roots() {
+        /*
+        return all complex roots of _poly !
+        */
+        var _this = this.monic(); 
+        var _one = Vector.one(_this.coefficient[0]); 
+        var _zero = Vector.zero(_this.coefficient[0]); 
+        var _kernel = [[]]; 
+        for (var i = _this.degree() - 1; i >= 0; i--) _kernel[0].push(Vector.negative(_this.coefficient[i])); 
+        for (var i = 0; i < _this.degree() - 1; i++) {
+            _kernel.push([]); 
+            for (var j = 0; j < _this.degree(); j++)
+                _kernel[i + 1].push((i == j) ? _one : _zero); 
+        }
+        var _matrix = new Matrix(_kernel); 
+        return _matrix.eigenvalue(); 
     }
     
     static similarOne(_this, precision) {

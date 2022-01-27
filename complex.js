@@ -1,4 +1,5 @@
 const Scalar = require('./scalar'); 
+const __PI = 3.1415926535897932384626433832795; 
 
 class Complex extends Scalar{
     constructor(real, imag) {
@@ -16,7 +17,9 @@ class Complex extends Scalar{
 
     modulus() { return Math.sqrt(this.real ** 2 + this.imag ** 2); }
 
-    radian() { return Math.atan(this.imag / this.real); }
+    radian() { return (this.real == 0 && this.imag == 0) ? 0 : Math.atan(this.imag / this.real) + ((this.real < 0) ? __PI : 0); }
+
+    radian_without_pi() { return (this.real == 0 && this.imag == 0) ? 0 : Math.atan(this.imag / this.real) / __PI + ((this.real < 0) ? 1 : 0); }
     
     latex() {
         if (this.imag > 0)
@@ -67,8 +70,8 @@ class Complex extends Scalar{
     pow(exp) {
         /* exp: Number */
         var _modulus = this.modulus() ** exp; 
-        var _radian = this.radian() * exp; 
-        return new Complex(_modulus * Math.cos(_radian), _modulus * Math.sin(_radian)); 
+        var _radian = this.radian_without_pi() * exp; 
+        return new Complex(_modulus * Math.cos(_radian * __PI), _modulus * Math.sin(_radian * __PI)); 
     }
 
     pow_left(exp) {

@@ -1,3 +1,4 @@
+const tool = require('./tool'); 
 const nt = require('./number_theory'); 
 const Scalar = require('./scalar'); 
 const Complex = require('./complex'); 
@@ -36,11 +37,11 @@ Scalar.latex_ = {};
 {/* Scalar static methods */
 Scalar.isNumber = (a) => { return (typeof(a) == "number" || a instanceof Number); }
 Scalar.isInt = (a) => { return ((typeof(a) == "number" || a instanceof Number) && a % 1 == 0); }
-Scalar.isScalar = (a) => { return (typeof(a) == "number" || a instanceof Number || a instanceof Scalar); }
+Scalar.isScalar = (a) => { if (a === undefined) return false; else return (typeof(a) == "number" || a instanceof Number || a == Number || a == Scalar || a instanceof Scalar || a.__proto__ == Scalar); }
 Scalar.typeof = (a) => {
     if (typeof(a) == "number" || a instanceof Number || a == Number) return "Number"; 
-    if (a.typeName) return a.typeName(); 
-    throw "it isn't a Scalar !"; 
+    if (a === undefined || !(a.typeName)) throw "it isn't a standard Scalar !"; 
+    else return a.typeName(); 
 }
 Scalar.equal = (a, b) => {
     if (Scalar.typeof(a) != Scalar.typeof(b))
@@ -63,8 +64,8 @@ Scalar.conjugate = (a) => { return Scalar.conjugate_[Scalar.typeof(a)](a); }
 Scalar.log = (a) => { return Scalar.log_[Scalar.typeof(a)](a); }
 Scalar.one = (a) => { return Scalar.one_[Scalar.typeof(a)](a); }
 Scalar.zero = (a) => { return Scalar.zero_[Scalar.typeof(a)](a); }
-Scalar.similarOne = (a, precision=Scalar.precision) => { return Scalar.similarOne_[Scalar.typeof(a)](a, precision); }
-Scalar.similarZero = (a, precision=Scalar.precision) => { return Scalar.similarZero_[Scalar.typeof(a)](a, precision); }
+Scalar.similarOne = (a, precision=Scalar.precision) => { return Scalar.similarOne_[Scalar.typeof(a)](a, (precision) ? precision : Scalar.precision); }
+Scalar.similarZero = (a, precision=Scalar.precision) => { return Scalar.similarZero_[Scalar.typeof(a)](a, (precision) ? precision : Scalar.precision); }
 Scalar.equalOne = (a) => { return Scalar.equalOne_[Scalar.typeof(a)](a); }
 Scalar.equalZero = (a) => { return Scalar.equalZero_[Scalar.typeof(a)](a); }
 Scalar.latex = (a) => { return Scalar.latex_[Scalar.typeof(a)](a); }
@@ -124,11 +125,11 @@ Scalar.div_.Complex0div0Number = (a, b) => { return new Complex(a.real / b, a.im
 Scalar.div_.Complex0div0Fraction = (a, b) => { return new Complex(a.real / b.toNumber(), a.imag / b.toNumber()); }
 Scalar.div_.Complex0div0Complex = (a, b) => { return a.div(b); }
 
-Scalar.pow_.Number0pow0Number = (a, b) => { return Math.pow(a, b); }
-Scalar.pow_.Number0pow0Fraction = (a, b) => { return Math.pow(a, b.toNumber()); }
+Scalar.pow_.Number0pow0Number = (a, b) => { return (a < 0 && (b % 1) != 0) ? new Complex(a).pow(b) : Math.pow(a, b); }
+Scalar.pow_.Number0pow0Fraction = (a, b) => { b = b.toNumber(); return (a < 0 && (b % 1) != 0) ? new Complex(a).pow(b) : Math.pow(a, b); }
 Scalar.pow_.Number0pow0Complex = (a, b) => { return b.pow_left(a); }
-Scalar.pow_.Fraction0pow0Number = (a, b) => { return (b % 1 == 0) ? a.pow(b) : Math.pow(a.toNumber(), b); }
-Scalar.pow_.Fraction0pow0Fraction = (a, b) => { return Math.pow(a.toNumber(), b.toNumber()); }
+Scalar.pow_.Fraction0pow0Number = (a, b) => { return (b % 1 == 0) ? a.pow(b) : Scalar.pow_.Number0pow0Number(a.toNumber(), b); }
+Scalar.pow_.Fraction0pow0Fraction = (a, b) => { b = b.toNumber(); return (b % 1 == 0) ? a.pow(b) : Scalar.pow_.Number0pow0Number(a.toNumber(), b); }
 Scalar.pow_.Fraction0pow0Complex = (a, b) => { return b.pow_left(a.toNumber()); }
 Scalar.pow_.Complex0pow0Number = (a, b) => { return a.pow(b); }
 Scalar.pow_.Complex0pow0Fraction = (a, b) => { return a.pow(b.toNumber()); }
@@ -218,10 +219,11 @@ Vector.latex_ = {};
 }
 {/* Vector static methods */
 Vector.isVector = (a) => { return (Scalar.isScalar(a) || a instanceof Vector); }
-Vector.typeof = (a) => { 
+Vector.typeof = (a) => {
     if (Scalar.isScalar(a)) return "Scalar"; 
+    if (a === undefined) throw "Can't be undefined !"; 
     if (a.typeName) return a.typeName(); 
-    throw "it is not a Vector !"; 
+    else throw "it isn't a standard Vector !"; 
 }
 Vector.equal = (a, b) => {
     if (Vector.typeof(a) != Vector.typeof(b))
@@ -244,8 +246,8 @@ Vector.reciprocal = (a) => { return Vector.reciprocal_[Vector.typeof(a)](a); }
 Vector.conjugate = (a) => { return Vector.conjugate_[Vector.typeof(a)](a); }
 Vector.one = (a) => { return Vector.one_[Vector.typeof(a)](a); }
 Vector.zero = (a) => { return Vector.zero_[Vector.typeof(a)](a); }
-Vector.similarOne = (a, precision=Scalar.precision) => { return Vector.similarOne_[Vector.typeof(a)](a, precision); }
-Vector.similarZero = (a, precision=Scalar.precision) => { return Vector.similarZero_[Vector.typeof(a)](a, precision); }
+Vector.similarOne = (a, precision=Scalar.precision) => { return Vector.similarOne_[Vector.typeof(a)](a, (precision) ? precision : Scalar.precision); }
+Vector.similarZero = (a, precision=Scalar.precision) => { return Vector.similarZero_[Vector.typeof(a)](a, (precision) ? precision : Scalar.precision); }
 Vector.equalOne = (a) => { return Vector.equalOne_[Vector.typeof(a)](a); }
 Vector.equalZero = (a) => { return Vector.equalZero_[Vector.typeof(a)](a); }
 Vector.latex = (a) => { return Vector.latex_[Vector.typeof(a)](a); }
@@ -300,8 +302,8 @@ Vector.positive_.Matrix = (a) => { return a.positive(); }
 Vector.negative_.Matrix = (a) => { return a.negative(); }
 Vector.reciprocal_.Matrix = (a) => { return a.inverse(); }
 Vector.conjugate_.Matrix = (a) => { return a.conjugate(); }
-Vector.one_.Matrix = Matrix.one; //[TODO]
-Vector.zero_.Matrix = Matrix.zero; //[TODO]
+Vector.one_.Matrix = Matrix.one; 
+Vector.zero_.Matrix = Matrix.zero; 
 Vector.similarOne_.Matrix = Matrix.similarOne; 
 Vector.similarZero_.Matrix = Matrix.similarZero; 
 Vector.equalOne_.Matrix = Matrix.equalOne; 
@@ -310,10 +312,10 @@ Vector.latex_.Matrix = (a) => { return a.latex(); }
 
 Vector.to_.Scalar0to0Polynomial = (a, b) => { return new Polynomial([a]); }
 Vector.to_.Scalar0toMatrix = (a, b) => {} //[TODO]
-Vector.add_.Scalar0add0Polynomial = (a, b) => { return new Polynomial(a) + b; }
-Vector.add_.Polynomial0add0Scalar = (a, b) => { return a + new Polynomial(b); }
-Vector.sub_.Scalar0sub0Polynomial = (a, b) => { return new Polynomial(a) - b; }
-Vector.sub_.Polynomial0sub0Scalar = (a, b) => { return a - new Polynomial(b); }
+Vector.add_.Scalar0add0Polynomial = (a, b) => { return new Polynomial([a]) + b; }
+Vector.add_.Polynomial0add0Scalar = (a, b) => { return a + new Polynomial([b]); }
+Vector.sub_.Scalar0sub0Polynomial = (a, b) => { return new Polynomial([a]) - b; }
+Vector.sub_.Polynomial0sub0Scalar = (a, b) => { return a - new Polynomial([b]); }
 Vector.mul_.Scalar0mul0Polynomial = (a, b) => { return b.times_left(a); }
 Vector.mul_.Polynomial0mul0Scalar = (a, b) => { return a.times(b); }
 Vector.div_.Polynomial0div0Scalar = (a, b) => { return a.times(Scalar.reciprocal(b)); }
@@ -323,6 +325,7 @@ Vector.pow_.Polynomial0pow0Scalar = (a, b) => { return a.pow(b); }
 
 }  // init
 
+exports.tool = tool; 
 exports.nt = nt; 
 exports.Scalar = Scalar; 
 exports.Complex = Complex; 
