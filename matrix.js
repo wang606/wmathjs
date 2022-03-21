@@ -867,8 +867,10 @@ class Matrix extends Vector{
         var _special_solutions_list = []; 
         for (var i = 0; i < b.size()[1]; i++) {
             var _row = b.size()[0] - 1; 
-            while (Vector.similarZero(_a.kernel[_row][a.size()[1] + i])) _row--; 
-            if (_row < _rank) {
+            while (_row >= 0 && Vector.similarZero(_a.kernel[_row][a.size()[1] + i])) _row--; 
+            if (_row < 0) {
+                _special_solutions_list.push(Matrix.zero_from_size(a.size()[1], 1, Vector.zero(_a.kernel[0][0]))); 
+            } else if (_row < _rank) {
                 var _special_solution = Matrix.zero_from_size(a.size()[1], 1, Vector.zero(_a.kernel[0][0])); 
                 _special_solution.fill(_a.part(undefined, [a.size()[1] + i]), _independent_cols, [0]); 
                 _special_solutions_list.push(_special_solution); 
